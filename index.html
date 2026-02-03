@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>For My Bujji ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    background:linear-gradient(to bottom right,#ff758c,#ff7eb3);
+    font-family:'Poppins',sans-serif;
+    text-align:center;
+    color:white;
+    overflow:hidden;
+}
+
+h1{
+    font-family:'Pacifico',cursive;
+    font-size:48px;
+    margin-bottom:10px;
+}
+h1 span{
+    animation:glow 2s infinite alternate;
+}
+h2{font-size:28px;margin:20px 10px;}
+h3{font-size:24px;}
+
+@keyframes glow{
+    from{text-shadow:0 0 10px pink;}
+    to{text-shadow:0 0 30px white;}
+}
+
+button{
+    padding:18px 35px;
+    font-size:22px;
+    border:none;
+    border-radius:30px;
+    margin:15px;
+    cursor:pointer;
+    font-family:'Poppins',sans-serif;
+}
+
+#yes{
+    background:#ff4d6d;
+    color:white;
+    box-shadow:0 0 15px rgba(255,255,255,0.4);
+}
+
+#no{
+    background:black;
+    color:white;
+    position:absolute;
+}
+
+#main,#quiz,#finalQuestion{padding:30px 15px;}
+.hidden{display:none;}
+
+.heart{
+    position:fixed;
+    animation:fly 6s linear infinite;
+}
+@keyframes fly{
+    0%{transform:translateY(100vh);opacity:1;}
+    100%{transform:translateY(-10vh);opacity:0;}
+}
+
+.correct{
+    background:rgba(0,255,0,0.25);
+    padding:20px;
+    border-radius:20px;
+    font-size:22px;
+    margin-top:20px;
+}
+
+.envelope{
+    font-size:100px;
+    cursor:pointer;
+    animation:bounce 1s infinite;
+}
+@keyframes bounce{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.1);}
+    100%{transform:scale(1);}
+}
+
+#letter{
+    font-size:24px;
+    line-height:1.6;
+    padding:25px;
+    background:rgba(255,255,255,0.15);
+    border-radius:25px;
+    margin:20px;
+}
+
+/* ⭐ ADDED: GIF STYLE */
+#yesGif{
+    width:260px;
+    margin-top:20px;
+    border-radius:20px;
+}
+</style>
+</head>
+
+<body>
+
+<audio id="song" preload="auto" loop>
+  <source src="perfect.mp3" type="audio/mp3">
+</audio>
+
+<div id="main">
+    <img src="hug.gif" width="240"><br>
+    <h1>Hello <span>Pallavi ❤️</span></h1>
+    <h2>Bujji… Will you be my Valentine? 🥺</h2>
+    <button id="yes" onclick="yesClicked()">YES</button>
+    <button id="no" onclick="noClicked()">NO</button>
+    <h3 id="flirt"></h3>
+</div>
+
+<div id="quiz" class="hidden">
+    <h2 id="question"></h2>
+    <div id="options"></div>
+    <p id="response"></p>
+    <button id="nextBtn" class="hidden" onclick="nextQuestion()">Next ➜</button>
+</div>
+
+<div id="finalQuestion" class="hidden">
+    <h2>Life long nathone untav kadha 🥺?</h2>
+    <button onclick="finalYes()">YES</button>
+    <button onclick="finalNo()">NO</button>
+
+    <!-- ⭐ ADDED: GIF (hidden initially) -->
+    <img src="me.gif" id="yesGif" class="hidden">
+</div>
+
+<div id="envelopeBox" class="hidden">
+    <div class="envelope" onclick="openLetter()">💌</div>
+    <h2>Open it…</h2>
+</div>
+
+<div id="letter" class="hidden"></div>
+
+<script>
+let noCount=0,qIndex=0,firstCorrect=false,answered=false;
+
+function noClicked(){
+    let lines=[
+        "Ayyo no aa 😳",
+        "Paripothav entra 😜",
+        "Prema ante escape undadu 😌",
+        "YES nokku pentamma 😘"
+    ];
+    flirt.innerHTML=lines[noCount%lines.length];
+    no.style.left=Math.random()*(innerWidth-140)+"px";
+    no.style.top=Math.random()*(innerHeight-80)+"px";
+    noCount++;
+}
+
+function yesClicked(){
+    main.style.display="none";
+    quiz.style.display="block";
+    song.play();
+    startHearts("❤️");
+    showQuestion();
+}
+
+const questions=[
+{q:"When was our first kiss 😘?",opts:["11-5-24","12-5-24","13-5-24","14-5-24"],ans:1},
+{q:"After how many months our relationship first fight was happened?",opts:["4 months","3 months","5 months","6 months"],ans:3}
+];
+
+function showQuestion(){
+    answered=false;
+    nextBtn.classList.add("hidden");
+    response.innerHTML="";
+    let q=questions[qIndex];
+    question.innerHTML=q.q;
+    options.innerHTML=q.opts.map((o,i)=>`<button onclick="check(${i})">${o}</button><br>`).join("");
+}
+
+function check(i){
+    if(answered) return;
+    let q=questions[qIndex];
+    if(i===q.ans){
+        answered=true;
+        response.className="correct";
+        startHearts("🤍");
+        response.innerHTML=qIndex===0
+        ? "😘<br>hmm gutundhi ga madam ki"
+        : firstCorrect
+          ? "😘<br>aboohhh rendu correct ga chepav ga"
+          : "😘<br>godavalu ayithey gurtuntai";
+        if(qIndex===0) firstCorrect=true;
+    }else{
+        response.innerHTML=qIndex===0
+        ? "anthey ley prema unte gurtupettukuntaru lekuntey deniki gurtupettukuntav<br><b>Correct: 12-5-24</b><br>idhey pichidana"
+        : "em gurthundav";
+    }
+    setTimeout(()=>nextBtn.classList.remove("hidden"),3000);
+}
+
+function nextQuestion(){
+    qIndex++;
+    qIndex<questions.length ? showQuestion() : (quiz.style.display="none",finalQuestion.style.display="block");
+}
+
+function finalYes(){
+    startHearts("❤️");
+    document.getElementById("yesGif").classList.remove("hidden"); // ⭐ ADDED
+    setTimeout(()=>{
+        finalQuestion.style.display="none";
+        envelopeBox.style.display="block";
+    },3000);
+}
+
+function finalNo(){alert("Adhi option kaadhu pentamma 😌");}
+
+function openLetter(){
+    envelopeBox.style.display="none";
+    letter.style.display="block";
+    letter.innerHTML=`
+    <h2>💌 My Love Pallavi</h2>
+    Pallavi ❤️<br><br>
+    Nuvvu naa life lo vachina best gift.<br>
+    Navvu, kopam, silence… anni nee thone 🥺<br><br>
+    Life long nee pakkane undali ani decide ayyanu.<br><br>
+    <b>I choose you. Always.</b><br><br>
+    Forever Yours,<br>
+    Koti ❣️`;
+}
+
+function startHearts(s){
+    setInterval(()=>{
+        let h=document.createElement("div");
+        h.className="heart";
+        h.innerHTML=s;
+        h.style.left=Math.random()*100+"vw";
+        h.style.fontSize=Math.random()*30+20+"px";
+        document.body.appendChild(h);
+        setTimeout(()=>h.remove(),6000);
+    },300);
+}
+</script>
+
+</body>
+</html>
